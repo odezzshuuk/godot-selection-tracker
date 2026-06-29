@@ -1,8 +1,7 @@
 [gd_scene format=3 uid="uid://cbpdmobvempo6"]
 
-[ext_resource type="Script" uid="uid://bcqk2lejfobno" path="res://addons/selection-tracker/entry/EntryControl.cs" id="1_qfrfo"]
-[ext_resource type="Texture2D" uid="uid://k2ge4rlr1eod" path="res://icon.svg" id="2_3c20q"]
-[ext_resource type="PackedScene" uid="uid://bfsofpvyoh700" path="res://addons/selection-tracker/scenes/drag-preview.tscn" id="2_pkl7x"]
+[ext_resource type="Script" uid="uid://bcqk2lejfobno" path="res://addons/godot-selection-tracker/entry/EntryControl.cs" id="1_qfrfo"]
+[ext_resource type="PackedScene" uid="uid://bfsofpvyoh700" path="res://addons/godot-selection-tracker/scenes/drag-preview.tscn" id="2_pkl7x"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v0srd"]
 bg_color = Color(0.1, 0.1, 0.1, 1)
@@ -28,7 +27,7 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 corner_detail = 20
 
-[sub_resource type="DPITexture" id="DPITexture_ahlup"]
+[sub_resource type="DPITexture" id="DPITexture_7gb8u"]
 _source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#e0e0e0\" d=\"M2 2a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-4a1 1 0 0 1-1-1V3a1 1 0 0 0-1-1z\"/></svg>
 "
 saturation = 2.0
@@ -38,7 +37,7 @@ Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
 Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
 }
 
-[sub_resource type="DPITexture" id="DPITexture_e63qp"]
+[sub_resource type="DPITexture" id="DPITexture_5acq8"]
 _source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#e0e0e0\" d=\"M10.168 8.754a5 5 0 1 0-1.414 1.414l4.316 4.316 1.414-1.414zM6 3a3 3 0 0 1 0 6 3 3 0 0 1 0-6z\"/></svg>
 "
 saturation = 2.0
@@ -100,7 +99,6 @@ theme_override_constants/margin_bottom = 4
 [node name="TextureRect" type="TextureRect" parent="RootBox/BoxMargin/HSplitContainer/EntryInfoContainer/MarginContainer" unique_id=839100726]
 layout_mode = 2
 size_flags_horizontal = 4
-texture = ExtResource("2_3c20q")
 expand_mode = 3
 
 [node name="RichTextLabel" type="RichTextLabel" parent="RootBox/BoxMargin/HSplitContainer/EntryInfoContainer" unique_id=2002852432]
@@ -123,7 +121,7 @@ theme_override_constants/outline_size = 1
 theme_override_constants/icon_max_width = 12
 theme_override_font_sizes/font_size = 10
 theme_override_styles/normal = SubResource("StyleBoxFlat_pv4it")
-icon = SubResource("DPITexture_ahlup")
+icon = SubResource("DPITexture_7gb8u")
 
 [node name="Locate" type="Button" parent="RootBox/BoxMargin/HSplitContainer/ButtonContainer" unique_id=1379081736]
 layout_mode = 2
@@ -132,32 +130,36 @@ tooltip_text = "Locate"
 theme_override_constants/outline_size = 1
 theme_override_font_sizes/font_size = 10
 theme_override_styles/normal = SubResource("StyleBoxFlat_pv4it")
-icon = SubResource("DPITexture_e63qp")
+icon = SubResource("DPITexture_5acq8")
 
 [node name="ContextMenu" type="PopupMenu" parent="." unique_id=2113863971]
 oversampling_override = 1.0
 size = Vector2i(126, 100)
-item_count = 10
+item_count = 12
 item_0/text = "Remove All"
 item_0/id = 0
 item_1/text = "Remove"
 item_1/id = 1
 item_2/id = -1
 item_2/separator = true
-item_3/text = "Get State"
+item_3/text = "Entry Info"
 item_3/id = 3
-item_4/text = "Entry Info"
+item_4/text = "Remove All"
 item_4/id = 4
-item_5/text = "Remove All"
+item_5/text = "Remove"
 item_5/id = 5
-item_6/text = "Remove"
-item_6/id = 6
-item_7/id = -1
-item_7/separator = true
-item_8/text = "Get State"
+item_6/id = -1
+item_6/separator = true
+item_7/text = "Entry Info"
+item_7/id = 7
+item_8/text = "Remove All"
 item_8/id = 8
-item_9/text = "Entry Info"
+item_9/text = "Remove"
 item_9/id = 9
+item_10/id = -1
+item_10/separator = true
+item_11/text = "Entry Info"
+item_11/id = 11
 
 [connection signal="pressed" from="RootBox/BoxMargin/HSplitContainer/ButtonContainer/Open" to="." method="OpenPressedCallback"]
 [connection signal="pressed" from="RootBox/BoxMargin/HSplitContainer/ButtonContainer/Locate" to="." method="_on_locate_pressed"]
