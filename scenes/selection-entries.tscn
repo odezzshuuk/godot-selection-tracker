@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://cgd1b1yyey7yr"]
+
+[ext_resource type="Script" uid="uid://ck1fidvtvucbs" path="res://addons/selection-tracker/container/ContainerControl.cs" id="1_6rqay"]
+[ext_resource type="PackedScene" uid="uid://cbpdmobvempo6" path="res://addons/selection-tracker/scenes/entry.tscn" id="2_04w0y"]
+
+[node name="ScrollContainer" type="ScrollContainer" unique_id=339901154 node_paths=PackedStringArray("_entriesContainer")]
+custom_minimum_size = Vector2(300, 300)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 50.0
+offset_bottom = -348.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+scroll_hint_mode = 3
+script = ExtResource("1_6rqay")
+_entriesContainer = NodePath("VLayout")
+_entryTemplate = ExtResource("2_04w0y")
+
+[node name="VLayout" type="VBoxContainer" parent="." unique_id=2058029542]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+
+[node name="Entry2" parent="VLayout" unique_id=243996738 instance=ExtResource("2_04w0y")]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Entry3" parent="VLayout" unique_id=1063141056 instance=ExtResource("2_04w0y")]
+layout_mode = 2
+
+[node name="Entry5" parent="VLayout" unique_id=1946592963 instance=ExtResource("2_04w0y")]
+layout_mode = 2
+
+[node name="Entry4" parent="VLayout" unique_id=1380104885 instance=ExtResource("2_04w0y")]
+layout_mode = 2

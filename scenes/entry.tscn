@@ -1,0 +1,165 @@
+[gd_scene format=3 uid="uid://cbpdmobvempo6"]
+
+[ext_resource type="Script" uid="uid://bcqk2lejfobno" path="res://addons/selection-tracker/entry/EntryControl.cs" id="1_qfrfo"]
+[ext_resource type="Texture2D" uid="uid://k2ge4rlr1eod" path="res://icon.svg" id="2_3c20q"]
+[ext_resource type="PackedScene" uid="uid://bfsofpvyoh700" path="res://addons/selection-tracker/scenes/drag-preview.tscn" id="2_pkl7x"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v0srd"]
+bg_color = Color(0.1, 0.1, 0.1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.51, 0.51, 0.51, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pv4it"]
+bg_color = Color(0.16, 0.16, 0.16, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+corner_detail = 20
+
+[sub_resource type="DPITexture" id="DPITexture_ahlup"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#e0e0e0\" d=\"M2 2a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-4a1 1 0 0 1-1-1V3a1 1 0 0 0-1-1z\"/></svg>
+"
+saturation = 2.0
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_e63qp"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#e0e0e0\" d=\"M10.168 8.754a5 5 0 1 0-1.414 1.414l4.316 4.316 1.414-1.414zM6 3a3 3 0 0 1 0 6 3 3 0 0 1 0-6z\"/></svg>
+"
+saturation = 2.0
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
+}
+
+[node name="Entry" type="Control" unique_id=258251935 node_paths=PackedStringArray("_entryNameLabel", "_entryIcon", "_locateButton", "_openButton", "_contextMenu")]
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 3
+script = ExtResource("1_qfrfo")
+_entryNameLabel = NodePath("RootBox/BoxMargin/HSplitContainer/EntryInfoContainer/RichTextLabel")
+_entryIcon = NodePath("RootBox/BoxMargin/HSplitContainer/EntryInfoContainer/MarginContainer/TextureRect")
+_locateButton = NodePath("RootBox/BoxMargin/HSplitContainer/ButtonContainer/Locate")
+_openButton = NodePath("RootBox/BoxMargin/HSplitContainer/ButtonContainer/Open")
+_contextMenu = NodePath("ContextMenu")
+_dragPreviewTemplate = ExtResource("2_pkl7x")
+
+[node name="RootBox" type="Panel" parent="." unique_id=874239484]
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_v0srd")
+
+[node name="BoxMargin" type="MarginContainer" parent="RootBox" unique_id=334970647]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="HSplitContainer" type="HSplitContainer" parent="RootBox/BoxMargin" unique_id=1167602115]
+layout_mode = 2
+split_offsets = PackedInt32Array(-104)
+split_offset = -104
+
+[node name="EntryInfoContainer" type="HBoxContainer" parent="RootBox/BoxMargin/HSplitContainer" unique_id=1927757768]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="RootBox/BoxMargin/HSplitContainer/EntryInfoContainer" unique_id=1477483952]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 4
+
+[node name="TextureRect" type="TextureRect" parent="RootBox/BoxMargin/HSplitContainer/EntryInfoContainer/MarginContainer" unique_id=839100726]
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("2_3c20q")
+expand_mode = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="RootBox/BoxMargin/HSplitContainer/EntryInfoContainer" unique_id=2002852432]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/strikethrough_alpha = 100
+bbcode_enabled = true
+text = "[s]Hello Dock[/s]"
+
+[node name="ButtonContainer" type="HBoxContainer" parent="RootBox/BoxMargin/HSplitContainer" unique_id=195120000]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="Open" type="Button" parent="RootBox/BoxMargin/HSplitContainer/ButtonContainer" unique_id=2043729987]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Open"
+theme_override_constants/outline_size = 1
+theme_override_constants/icon_max_width = 12
+theme_override_font_sizes/font_size = 10
+theme_override_styles/normal = SubResource("StyleBoxFlat_pv4it")
+icon = SubResource("DPITexture_ahlup")
+
+[node name="Locate" type="Button" parent="RootBox/BoxMargin/HSplitContainer/ButtonContainer" unique_id=1379081736]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Locate"
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 10
+theme_override_styles/normal = SubResource("StyleBoxFlat_pv4it")
+icon = SubResource("DPITexture_e63qp")
+
+[node name="ContextMenu" type="PopupMenu" parent="." unique_id=2113863971]
+oversampling_override = 1.0
+size = Vector2i(126, 100)
+item_count = 10
+item_0/text = "Remove All"
+item_0/id = 0
+item_1/text = "Remove"
+item_1/id = 1
+item_2/id = -1
+item_2/separator = true
+item_3/text = "Get State"
+item_3/id = 3
+item_4/text = "Entry Info"
+item_4/id = 4
+item_5/text = "Remove All"
+item_5/id = 5
+item_6/text = "Remove"
+item_6/id = 6
+item_7/id = -1
+item_7/separator = true
+item_8/text = "Get State"
+item_8/id = 8
+item_9/text = "Entry Info"
+item_9/id = 9
+
+[connection signal="pressed" from="RootBox/BoxMargin/HSplitContainer/ButtonContainer/Open" to="." method="OpenPressedCallback"]
+[connection signal="pressed" from="RootBox/BoxMargin/HSplitContainer/ButtonContainer/Locate" to="." method="_on_locate_pressed"]
+[connection signal="pressed" from="RootBox/BoxMargin/HSplitContainer/ButtonContainer/Locate" to="." method="LocatePressedCallback"]
+[connection signal="id_pressed" from="ContextMenu" to="." method="ContextMenuIdPressedCallback"]

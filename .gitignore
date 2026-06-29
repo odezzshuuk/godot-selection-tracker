@@ -1,0 +1,90 @@
+# Godot-specific project files
+.import/
+.godot/
+/android/
+
+# Exported projects
+export/
+exports/
+*.apk
+*.aab
+*.ipa
+*.exe
+*.x86
+*.x86_64
+*.arm32
+*.arm64
+*.dmg
+*.zip
+*.tar.gz
+*.wasm
+*.js
+*.pck
+*.apk
+
+# Godot 3.x import and cache
+*.import
+
+# Mono/C# specifics
+.mono/
+data_*/
+mono_crash.*.json
+
+# C# build artifacts
+obj/
+bin/
+*.csproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Editor backups
+*~
+*.bak
+*.orig
+*.swp
+*.swo
+
+# Log files
+*.log
+logs/
+
+# Environment / local config overrides
+.env
+.env.local
+
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# Android export
+android/build/
+
+# iOS export
+ios/build/
+ios/pods/
+ios/Podfile.lock
+
+# Web export
+html/
+
+# Temp files
+tmp/
+temp/

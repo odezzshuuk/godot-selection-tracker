@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://bfsofpvyoh700"]
+
+[ext_resource type="Script" uid="uid://xb6184hkqk32" path="res://addons/selection-tracker/DragPreviewControl.cs" id="1_5xa5e"]
+[ext_resource type="Texture2D" uid="uid://d2spkkxrev4v0" path="res://addons/selection-tracker/harp.svg" id="2_ohu3o"]
+
+[node name="DragPreview" type="Control" unique_id=413978725 node_paths=PackedStringArray("_icon", "_label")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5xa5e")
+_icon = NodePath("HBoxContainer/Icon")
+_label = NodePath("HBoxContainer/Label")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1902726041]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer" unique_id=123788111]
+layout_mode = 2
+texture = ExtResource("2_ohu3o")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer" unique_id=1566692471]
+layout_mode = 2
+text = "Preview Text"
