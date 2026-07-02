@@ -9,7 +9,7 @@ public partial class NodeEntryModel : EntryModel {
 
   [Export] private string _cachedNodePath;
   [Export] private string _cachedSceneFileName;
-  [Export] private string _cachedScenePath;
+  [Export] private string _cachedMountedScenePath;
 
   [Export]
   protected ulong _instanceId;  // session-only
@@ -19,11 +19,14 @@ public partial class NodeEntryModel : EntryModel {
   [Export] protected string _cachedNodeType;
   [Export] private Node _cachedNode;
   [Export] private Node _cachedOwner;
+  [Export] private string _cachedName;
 
   private SceneTree _cachedSceneTree;
 
   // public override Variant Ref => _cachedNode;
-  public override string DisplayName => string.Concat(_cachedSceneFileName, "/", _cachedNode.Name);
+  public override string DisplayName => _cachedNode != null
+    ? string.Concat(_cachedSceneFileName, "/", _cachedNode.Name)
+    : string.Concat(_cachedSceneFileName, "/", _cachedName);
 
   public override EntryState CurrentEntryState {
     get => _cachedRefState;
@@ -70,7 +73,7 @@ public partial class NodeEntryModel : EntryModel {
     }
 
     if (CurrentEntryState.HasFlag(EntryState.Unloaded)) {
-      editor.OpenSceneFromPath(_cachedScenePath);
+      editor.OpenSceneFromPath(_cachedMountedScenePath);
       editor.GetSelection().Clear();
       editor.GetSelection().AddNode(_cachedNode);
       editor.EditNode(_cachedNode);
@@ -81,8 +84,9 @@ public partial class NodeEntryModel : EntryModel {
   protected void CacheNodeInfo(Node node) {
     _cachedNode = node;
     _cachedNodePath = node.IsInsideTree() ? node.GetPath() : string.Empty;
-    _cachedScenePath = GetScenePath(node);
-    _cachedSceneFileName = _cachedScenePath.GetFile();
+    _cachedMountedScenePath = GetScenePath(node);
+    _cachedName = node.Name;
+    _cachedSceneFileName = _cachedMountedScenePath.GetFile();
     _cachedSceneTree = node.GetTree();
     _cachedOwner = node.Owner;
     _cachedNodeType = node.GetType().Name;
@@ -90,17 +94,13 @@ public partial class NodeEntryModel : EntryModel {
     _cachedIcon = EditorInterface.Singleton.GetBaseControl().GetThemeIcon(node.GetClass(), "EditorIcons");
     _instanceId = node.GetInstanceId();
     _cachedRefState = EntryState.Loaded;
-    _sceneFileUid = ResourceLoader.GetResourceUid(_cachedScenePath);
+    _sceneFileUid = ResourceLoader.GetResourceUid(_cachedMountedScenePath);
 
     _dragPayloadType = "nodes";
     _dragPayloadData = _cachedNodePath;
   }
 
   private string GetScenePath(Node node) {
-    if (!string.IsNullOrEmpty(node.SceneFilePath)) {
-      return node.SceneFilePath;
-    }
-
     Node current = node;
     while (current.GetParent() != null) {
       current = current.GetParent();
@@ -108,13 +108,17 @@ public partial class NodeEntryModel : EntryModel {
         return current.SceneFilePath;
       }
     }
-    return string.Empty;
+    return node.SceneFilePath;
   }
 
   private void NodeRemovedCallback(Node node) {
     if (node == _cachedNode) {
       if (EditorInterface.Singleton.GetEditedSceneRoot() == _cachedOwner) {
         CurrentEntryState = EntryState.Deleted;
+        node.GetTree().NodeRemoved -= NodeRemovedCallback;
+        node.GetTree().NodeRenamed -= NodeRenamedCallback;
+        EditorInterface.Singleton.GetResourceFilesystem().FilesystemChanged -= FileSystemChangedCallback;
+        PluginHandle.Instance.onSelectedSceneChanged -= SelectedSceneChangedCallback;
       } else {
         CurrentEntryState = EntryState.Unloaded;
       }
@@ -144,9 +148,10 @@ public partial class NodeEntryModel : EntryModel {
   public override string ToString() {
     return $"""
     ----------- EntryModel Debug Info -----------
-      NodeEntryModel: {_cachedNode.Name},
+      NodeName: {_cachedNode.Name},
       NodePath: {_cachedNodePath},
-      ScenePath: {_cachedScenePath},
+      ParentNode: {_cachedNode?.GetParent()?.Name},
+      ScenePath: {_cachedMountedScenePath},
       CachedScene: {_cachedOwner?.Name},
       EditedSceneTreeRoot: {_cachedSceneTree?.EditedSceneRoot.Name},
       EditedSceneRoot: {EditorInterface.Singleton.GetEditedSceneRoot()?.Name},
