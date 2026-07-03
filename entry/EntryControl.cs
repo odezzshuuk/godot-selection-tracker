@@ -8,10 +8,8 @@ namespace Odezzshuuk.Editor.SelectionTracker;
 public partial class EntryControl : Control {
 
   [ExportGroup("References")]
-  [Export]
-  private RichTextLabel _entryNameLabel;
-  [Export]
-  private TextureRect _entryIcon;
+  [Export] private RichTextLabel _entryNameLabel;
+  [Export] private TextureRect _entryIcon;
   [Export] private Button _locateButton;
   [Export] private Button _openButton;
   [Export] private PopupMenu _contextMenu;
@@ -57,7 +55,9 @@ public partial class EntryControl : Control {
 
   public override void _Ready() {
     PluginHandle.Instance.onSearchTextChanged += SearchTextChangedCallback;
-
+    if (_entry != null) {
+      BindEntry(_entry);
+    }
   }
 
 
@@ -109,7 +109,14 @@ public partial class EntryControl : Control {
     return dragData;
   }
 
-  private void BindEntry(EntryModel value) {
+  private async void BindEntry(EntryModel value) {
+
+    // Bind entry will be called before _entryIcon is deserialized
+    // Or let's say, Before every [Export] variable is deserialized
+    if (_entryIcon == null) {
+      return;
+    }
+
     _entry = value;
     _entryIcon.Texture = _entry.Icon;
     _entryIcon.Visible = _entry.Icon != null;
@@ -117,8 +124,8 @@ public partial class EntryControl : Control {
     _openButton.Visible = hideOpen;
     _entryNameLabel.Modulate = _loadedColor;
     _entryNameLabel.Text = _entry.DisplayName;
-
     _entry.onUpdated += UpdatedCallback;
+
   }
 
   private void RemoveAllEntries() {
@@ -140,6 +147,8 @@ public partial class EntryControl : Control {
   }
 
   private void UpdatedCallback() {
+    if (_entry == null || _entryNameLabel == null) return;
+
     EntryState state = _entry.CurrentEntryState;
 
     if (state.HasFlag(EntryState.Deleted) || state.HasFlag(EntryState.Freed)) {

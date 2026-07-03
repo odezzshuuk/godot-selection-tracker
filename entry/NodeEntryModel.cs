@@ -32,13 +32,15 @@ public partial class NodeEntryModel : EntryModel {
     get => _cachedRefState;
     set {
       _cachedRefState = value;
-      onUpdated.Invoke();
+      onUpdated?.Invoke();
     }
   }
 
   public NodeEntryModel() { }
   public NodeEntryModel(Node node) {
+
     CacheNodeInfo(node);
+
     node.GetTree().NodeRemoved += NodeRemovedCallback;
     node.GetTree().NodeRenamed += NodeRenamedCallback;
     EditorInterface.Singleton.GetResourceFilesystem().FilesystemChanged += FileSystemChangedCallback;
@@ -55,7 +57,8 @@ public partial class NodeEntryModel : EntryModel {
       return false;
     }
 
-    return otherNodeEntry._cachedNode == _cachedNode || otherNodeEntry._instanceId == _instanceId;
+    return otherNodeEntry._cachedNode == _cachedNode ||
+      otherNodeEntry._instanceId == _instanceId;
   }
 
   public override int GetHashCode() {
@@ -115,10 +118,6 @@ public partial class NodeEntryModel : EntryModel {
     if (node == _cachedNode) {
       if (EditorInterface.Singleton.GetEditedSceneRoot() == _cachedOwner) {
         CurrentEntryState = EntryState.Deleted;
-        node.GetTree().NodeRemoved -= NodeRemovedCallback;
-        node.GetTree().NodeRenamed -= NodeRenamedCallback;
-        EditorInterface.Singleton.GetResourceFilesystem().FilesystemChanged -= FileSystemChangedCallback;
-        PluginHandle.Instance.onSelectedSceneChanged -= SelectedSceneChangedCallback;
       } else {
         CurrentEntryState = EntryState.Unloaded;
       }
@@ -137,6 +136,7 @@ public partial class NodeEntryModel : EntryModel {
     }
   }
 
+  // when the filesystem changes, update the scene file name
   private void FileSystemChangedCallback() {
     // update scene file prefix
     string path = ResourceUid.Singleton.GetIdPath(_sceneFileUid);

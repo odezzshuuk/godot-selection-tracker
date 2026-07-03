@@ -13,10 +13,10 @@ public partial class Bootstrap : EditorPlugin {
   private readonly PluginHandle _pluginHandle = PluginHandle.Instance;
 
   public override void _EnterTree() {
-    PackedScene panelSc = ResourceLoader.Load<PackedScene>(MAIN_PANEL_SCENE_PATH);
-    Node panelNode = panelSc.Instantiate();
+    PackedScene winPckSc = ResourceLoader.Load<PackedScene>(MAIN_WIN_SCENE_PATH);
+    Node winNode = winPckSc.Instantiate();
 
-    _pluginHandle.panelNode = panelNode;
+    _pluginHandle.winNode = winNode;
 
     _pluginDock = new EditorDock {
       Title = "Selections Tracker",
@@ -26,7 +26,7 @@ public partial class Bootstrap : EditorPlugin {
     };
 
 
-    _pluginDock.AddChild(panelNode);
+    _pluginDock.AddChild(winNode);
     AddDock(_pluginDock);
 
     SceneChanged += (scene) => _pluginHandle.onSelectedSceneChanged?.Invoke(scene);

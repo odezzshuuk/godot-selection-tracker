@@ -16,7 +16,7 @@ public class PluginHandle {
 
   public static PluginHandle Instance => s_Instance.Value;
 
-  public Node panelNode;
+  public Node winNode;
   public Node containerNode;
 
   public Action<Node> onSelectedSceneChanged;
