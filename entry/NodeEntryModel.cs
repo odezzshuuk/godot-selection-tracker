@@ -23,10 +23,16 @@ public partial class NodeEntryModel : EntryModel {
 
   private SceneTree _cachedSceneTree;
 
+
+  private string GetSafeNodeName() {
+    if (IsAlive(_cachedNode)) {
+      _cachedName = _cachedNode.Name;
+    }
+    return _cachedName ?? string.Empty;
+  }
+
   // public override Variant Ref => _cachedNode;
-  public override string DisplayName => _cachedNode != null
-    ? string.Concat(_cachedSceneFileName, "/", _cachedNode.Name)
-    : string.Concat(_cachedSceneFileName, "/", _cachedName);
+  public override string DisplayName => string.Concat(_cachedSceneFileName, "/", GetSafeNodeName());
 
   public override EntryState CurrentEntryState {
     get => _cachedRefState;
@@ -45,6 +51,24 @@ public partial class NodeEntryModel : EntryModel {
     node.GetTree().NodeRenamed += NodeRenamedCallback;
     EditorInterface.Singleton.GetResourceFilesystem().FilesystemChanged += FileSystemChangedCallback;
     PluginHandle.Instance.onSelectedSceneChanged += SelectedSceneChangedCallback;
+  }
+
+  public override void _ExitTree() {
+    if (IsAlive(_cachedSceneTree)) {
+      _cachedSceneTree.NodeRemoved -= NodeRemovedCallback;
+      _cachedSceneTree.NodeRenamed -= NodeRenamedCallback;
+    }
+
+    if (IsAlive(EditorInterface.Singleton)) {
+      EditorFileSystem filesystem = EditorInterface.Singleton.GetResourceFilesystem();
+      if (IsAlive(filesystem)) {
+        filesystem.FilesystemChanged -= FileSystemChangedCallback;
+      }
+    }
+
+    if (PluginHandle.Instance != null) {
+      PluginHandle.Instance.onSelectedSceneChanged -= SelectedSceneChangedCallback;
+    }
   }
 
 
@@ -66,6 +90,9 @@ public partial class NodeEntryModel : EntryModel {
   }
 
   public override void Locate() {
+    if (!IsAlive(_cachedNode)) {
+      return;
+    }
     EditorInterface.Singleton.EditNode(_cachedNode);
   }
 
@@ -77,9 +104,11 @@ public partial class NodeEntryModel : EntryModel {
 
     if (CurrentEntryState.HasFlag(EntryState.Unloaded)) {
       editor.OpenSceneFromPath(_cachedMountedScenePath);
-      editor.GetSelection().Clear();
-      editor.GetSelection().AddNode(_cachedNode);
-      editor.EditNode(_cachedNode);
+      if (IsAlive(_cachedNode)) {
+        editor.GetSelection().Clear();
+        editor.GetSelection().AddNode(_cachedNode);
+        editor.EditNode(_cachedNode);
+      }
       return;
     }
   }
@@ -115,23 +144,31 @@ public partial class NodeEntryModel : EntryModel {
   }
 
   private void NodeRemovedCallback(Node node) {
-    if (node == _cachedNode) {
-      if (EditorInterface.Singleton.GetEditedSceneRoot() == _cachedOwner) {
-        CurrentEntryState = EntryState.Deleted;
-      } else {
-        CurrentEntryState = EntryState.Unloaded;
-      }
+    if (!IsAlive(node) || node.GetInstanceId() != _instanceId) {
+      return;
+    }
+
+    _cachedName = node.Name;
+    _cachedNode = null;
+
+    if (EditorInterface.Singleton.GetEditedSceneRoot() == _cachedOwner) {
+      CurrentEntryState = EntryState.Deleted;
+    } else {
+      CurrentEntryState = EntryState.Unloaded;
     }
   }
 
   private void NodeRenamedCallback(Node node) {
-    if (node == _cachedNode) {
-      onUpdated.Invoke();
+    if (!IsAlive(node) || node.GetInstanceId() != _instanceId) {
+      return;
     }
+
+    _cachedName = node.Name;
+    onUpdated?.Invoke();
   }
 
   private void SelectedSceneChangedCallback(Node node) {
-    if (node == _cachedOwner) {
+    if (IsAlive(_cachedOwner) && node == _cachedOwner) {
       CurrentEntryState = EntryState.Loaded;
     }
   }
@@ -141,19 +178,32 @@ public partial class NodeEntryModel : EntryModel {
     // update scene file prefix
     string path = ResourceUid.Singleton.GetIdPath(_sceneFileUid);
     _cachedSceneFileName = path.GetFile();
-    onUpdated.Invoke();
+    onUpdated?.Invoke();
+  }
+
+  private bool IsAlive(GodotObject obj) {
+    return obj != null && IsInstanceValid(obj);
   }
 
   #region debugging
   public override string ToString() {
+    string nodeName = GetSafeNodeName();
+    string parentName = IsAlive(_cachedNode) && IsAlive(_cachedNode.GetParent())
+      ? _cachedNode.GetParent().Name
+      : "<none>";
+    string cachedSceneName = IsAlive(_cachedOwner) ? _cachedOwner.Name : "<none>";
+    string editedSceneTreeRoot = IsAlive(_cachedSceneTree) && IsAlive(_cachedSceneTree.EditedSceneRoot)
+      ? _cachedSceneTree.EditedSceneRoot.Name
+      : "<none>";
+
     return $"""
     ----------- EntryModel Debug Info -----------
-      NodeName: {_cachedNode.Name},
+      NodeName: {nodeName},
       NodePath: {_cachedNodePath},
-      ParentNode: {_cachedNode?.GetParent()?.Name},
+      ParentNode: {parentName},
       ScenePath: {_cachedMountedScenePath},
-      CachedScene: {_cachedOwner?.Name},
-      EditedSceneTreeRoot: {_cachedSceneTree?.EditedSceneRoot.Name},
+      CachedScene: {cachedSceneName},
+      EditedSceneTreeRoot: {editedSceneTreeRoot},
       EditedSceneRoot: {EditorInterface.Singleton.GetEditedSceneRoot()?.Name},
       PathFromId: {ResourceUid.Singleton.GetIdPath(_sceneFileUid)},
     """;

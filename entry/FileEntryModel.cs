@@ -17,7 +17,7 @@ public partial class FileEntryModel : EntryModel {
     get => _cachedRefState;
     set {
       _cachedRefState = value;
-      onUpdated.Invoke();
+      onUpdated?.Invoke();
     }
   }
 
@@ -77,7 +77,7 @@ public partial class FileEntryModel : EntryModel {
       CurrentEntryState = EntryState.Deleted;
     }
 
-    onUpdated.Invoke();
+    onUpdated?.Invoke();
   }
 }
 #endif

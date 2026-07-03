@@ -42,7 +42,6 @@ public partial class ContainerControl : Control {
   }
 
   private void RecordEntry(EntryModel model) {
-
     int existingIndex = FindEntryIndex(model);
     if (existingIndex != -1) {
       RemoveChild(GetChildren()[existingIndex]);
